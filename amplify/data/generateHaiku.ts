@@ -15,7 +15,7 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
   // User prompt
   const prompt = event.arguments.prompt;
 
-  // Invoke model
+  // Converse model
   const input = {
     modelId: process.env.MODEL_ID,
     messages: [
@@ -44,7 +44,11 @@ export const handler: Schema["generateHaiku"]["functionHandler"] = async (
   const response = await client.send(command);
 
   // Parse the response and return the generated haiku
-  const data = response.output
+  const data = response.output?.message?.content?.[0]?.text;
 
-  return data.message.content[0].text;
+  if (data) {
+    return data;
+  } else {
+    throw new Error('Failed to generate haiku');
+  }
 };
